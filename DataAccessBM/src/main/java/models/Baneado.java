@@ -10,13 +10,13 @@ import java.sql.Timestamp;
  *
  * @author pausa
  */
-public class Favorito {
+public class Baneado {
     private int id;
     private int idUsuario;
     private int idCancion;
-    private Timestamp fechaAgregado;
+    private java.sql.Timestamp fechaAgregado;
 
-    public Favorito(int idUsuario, int idCancion, Timestamp fechaAgregado) {
+    public Baneado(int idUsuario, int idCancion, Timestamp fechaAgregado) {
         this.idUsuario = idUsuario;
         this.idCancion = idCancion;
         this.fechaAgregado = fechaAgregado;
