@@ -24,6 +24,7 @@ public class Usuario {
         this.apellido = apellido;
         this.correo = correo;
         this.contrasenia = contrasenia;
+        this.imagen = "/usuarios/"+nombre+".png";
     }
 
     public int getId() {

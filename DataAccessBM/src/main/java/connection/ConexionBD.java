@@ -15,7 +15,7 @@ public class ConexionBD implements ConexionBDImp{
     
     public static ConexionBD conexion;
     private Connection connection;
-    private String url = "jdbc:mysql://localhost:3306/biblioteca2";
+    private String url = "jdbc:mysql://localhost:3306/bibliotecamusical2";
     private String user = "root";
     private String password = "admin";
     

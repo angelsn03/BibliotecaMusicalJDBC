@@ -2,6 +2,7 @@
 package dao;
 
 import connection.ConexionBD;
+import interfaces.UsuarioDAOImp;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,7 +14,7 @@ import org.mindrot.jbcrypt.BCrypt;
  *
  * @author pausa
  */
-public class UsuarioDAO {
+public class UsuarioDAO implements UsuarioDAOImp{
     private ConexionBD bd;
     private Connection connection;
     public UsuarioDAO() {
@@ -21,13 +22,14 @@ public class UsuarioDAO {
         this.connection = bd.getConnection();
     }
     
+    @Override
     public void Registrar(Usuario u){
         if (isRegistrado(u.getCorreo())) {
             JOptionPane.showMessageDialog(
                     null, "Ya existe un usuario con esta contraseña!", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
         
-        String query = "INSERT INTO usuarios (nombre, apellido, correo, contrasenia) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO usuarios (nombre, apellido, correo, contrasenia) VALUES (?, ?, ?, ?, ?)";
         
         try {
             PreparedStatement ps = connection
@@ -36,13 +38,16 @@ public class UsuarioDAO {
             ps.setString(2, u.getApellido());
             ps.setString(3, u.getCorreo());
             ps.setString(4, encriptarContrasenia(u.getContrasenia()));
+            ps.setString(4, u.getImagen());
             ps.executeUpdate();
+            System.out.println("Usuario registrado con éxito!");
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "falsió: "+e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             System.err.println("falsió, checa "+e.getMessage());
         }
     }
     
+    @Override
     public void IniciarSesion(String correo, String contrasenia){
         String query = "SELECT contrasenia FROM usuarios WHERE correo = ?";
         try {
@@ -64,6 +69,26 @@ public class UsuarioDAO {
             JOptionPane.showMessageDialog(null, "Error al intentar iniciar sesión: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             System.err.println("Error al intentar iniciar sesión: " + e.getMessage());
         }
+    }
+    
+    @Override
+    public Usuario SeleccionarUsuarioPorID(int id){
+        String query = "SELECT * FROM usuarios WHERE id = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                String nombre = rs.getString("nombre");
+                String apellido = rs.getString("apellido");
+                String correo = rs.getString("correo");
+                String contrasenia = rs.getString("contrasenia");
+                return new Usuario(nombre, apellido, correo, contrasenia);
+            }
+        } catch (Exception e) {
+            System.out.println("Error al buscar al usuario por su Id: " + e.getMessage());
+        }
+        return null;
     }
     
     private boolean isRegistrado(String correo){
